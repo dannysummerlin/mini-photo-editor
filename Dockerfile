@@ -8,5 +8,9 @@ RUN npm run build
 
 FROM busybox:1.30 AS runner
 WORKDIR /app
+# adding proper MIME types
+RUN echo ".wasm:application/wasm" > httpd.conf
+RUN echo ".js:text/javascript" >> httpd.conf
+RUN echo ".json:application/json" >> httpd.conf
 COPY --from=builder /app/dist .
-CMD ["busybox", "httpd", "-f", "-v", "-p", "8080"]
+CMD ["busybox", "httpd", "-f", "-v", "-p", "8080", "-c", "httpd.conf"]
